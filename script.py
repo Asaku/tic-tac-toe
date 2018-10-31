@@ -1,43 +1,73 @@
 #!/usr/bin/python3
+# coding: utf-8
 
-# La fonction affiche les nombres de 1 à 9
+def reset():
+    grille = []
+    loop = 0
+    constructGrille()
 
 def constructGrille():
+    grille = []
     i = 1
     for nLigne in range(3):
         ligne=[]
         for nColonne in range(3):
-            ligne.append(i)
+            ligne.append("*")
             i = i + 1
         grille.append(ligne)
+    return grille
 
-def afficheGrille():
+def afficheGrille(grille):
     for nLigne in range(3):
         for nColonne in range(3):
             print(grille[nLigne][nColonne], end=' ')
         print('\n', end='')
 
-grille = []
+def play(player, grille):
+    l = int(input("Joueur "+str(player)+" joue, entré la ligne: "))
+    c = int(input("Joueur "+str(player)+" joue, entré la colonne: "))
+    l = l - 1
+    c = c - 1
 
-constructGrille()
+    if grille[l][c] and grille[l][c] != "X" and grille[l][c] != "O":
+        return l, c
+    else:
+        play(player)
 
-afficheGrille()
+def checkGame(grille, loop, playerOne, playerTwo):
+    for nLigne in range(3):
+        elements = []
+        for lig in range(3):
+            elements.append(grille[lig][nLigne])
+        if grille[nLigne].count("X") == 3 or elements.count("X") == 3:
+            print("Joueur 1 gagne")
+            playerOne = playerOne + 1
+            game()
+        if grille[nLigne].count("O") == 3 or elements.count("O") == 3:
+            print("Joueur 2 gagne")
+            playerTwo = playerTwo + 1
+            game()
 
-#Pour faire jouer les deux joueurs regarde la récursivité: https://www.lucaswillems.com/fr/articles/17/recursivite-accelerer-algorithmes
+    if loop == 5:
+        exit("Equality")
 
-a = 0
-#while true un classique, permet de relancer du code à gogo, par exemple tant que la partie est pas terminé.
-while True:
-    print(a)
-    a = a + 1
-    #pour demander une entré au joueur
-    data = input("Joueur X joue: ")
-    print(data)
+def game():
+    grille = constructGrille()
+    loop = 0
+    playerOne = 0
+    playerTwo = 0
+    reset()
+    while True:
+        loop = loop + 1
+        afficheGrille(grille)
+        l, c = play(1, grille)
+        grille[l][c] = "X"
+        checkGame(grille, loop, playerOne, playerTwo)
 
-    #La condition de sortie du code, a toi de trouver laquelle mettre
-    if a > 10:
-        break
+        afficheGrille(grille)
+        l, c = play(2, grille)
+        grille[l][c] = "O"
+        checkGame(grille, loop, playerOne, playerTwo)
 
-#Good luck
-
-
+print("début de partie: Joueur VS Joueur")
+game()
